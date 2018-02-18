@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+
+  "name": "AutoChrome",
+  "description": "Browser automation.",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "img/icon.png",
+//    "default_popup": "popup.html",
+    "default_title": "Title!"
+  },
+  "background": {
+    "scripts": ["js/background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["js/jquery-3.2.1.js", "js/Recorder.js", "js/contentScript.js"]
+    }
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "http://*/*",
+    "https://*/*"
+  ]
+}

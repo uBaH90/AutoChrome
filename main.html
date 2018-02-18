@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AutoChrome</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/autochrome.css" rel="stylesheet">
+    <script src="js/jquery-3.2.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/autochrome.js"></script>
+</head>
+
+<body>
+<div class="container" id="header">
+    <div class="row">
+        <hr>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <button class="btn btn-default" id="btn-play">play</button>
+            <button class="btn btn-danger" id="btn-record">record</button>
+            <button class="btn btn-default" id="btn-stop">stop</button>
+            <button class="btn btn-info" id="btn-init">init</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <hr>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-3">
+            <select>
+
+            </select>
+        </div>
+
+        <div class="col-xs-9">
+            <div class="row">
+                <div class="col-xs-12">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Target</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>input</td>
+                            <td>input:id=login-username</td>
+                            <td>john@example.com</td>
+                        </tr>
+                        <tr>
+                            <td>click</td>
+                            <td>input:id=persistent</td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <hr>
+                </div>
+
+                <div class="col-xs-12">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="command">Command:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="command">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="target">Target:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="target">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="value">Value:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="value">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
