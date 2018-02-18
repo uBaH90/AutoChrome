@@ -6,21 +6,15 @@ class Recorder {
         this.window = window;
     }
 
-    record() {
-        alert("recording...");
+    record(callback) {
+        console.log("recording...");
 
-        // You can also Use mousemove, resize and scroll
-        // for (var i = 0; i < events.length; i++) {
-        //     // Attach Listener for all events from array
-        //     window.addEventListener("" + events[i] + "", function (e) {
-        //         console.log("Adding even-listener: " + events[i]);
-        //         evenListener(function (e) {
-        //             alert(JSON.stringify(e, null, 4))
-        //         });
-        //     }, false);
-        // }
         $(":input").each(function (key, value) {
-            console.log("key: " + key + ", value: " + $(this).attr('id'));
-        })
+            // console.log("key: " + key + ", value: " + $(this).attr('id'));
+            var id = $(this).attr ('id');
+            $(this).blur(function() {
+              callback({target: "input", targetId: id, eventType: "blur", value: $(this).val()});
+            });
+        });
     }
 }

@@ -1,7 +1,5 @@
 
-// chrome.runtime.sendMessage({cmd: "alert"});
-
-
+var actions = [];
 
 $( document ).ready(function() {
     console.log("contentscript: document ready");
@@ -17,7 +15,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         case "record":
             console.log("record");
             var recorder = new Recorder(window);
-            recorder.record();
+            recorder.record(addAction);
+            break;
+
+        case "stop":
+            sendResponse(actions);
             break;
 
         default:
@@ -26,6 +28,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     return true;
 });
+
+function addAction(action) {
+  console.log("Adding action...: " + JSON.stringify(action, null, 4))
+  actions.push(action);
+}
 
 function performEvent(event) {
     console.log("performEvent:  ID: " + event.id + "\nValue: " + event.value + "\nType: " + event.eventType);

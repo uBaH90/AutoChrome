@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.windows.create({
             url: chrome.runtime.getURL("main.html"),
             type: "popup",
-            width: 500,
+            width: 700,
             height: 1000
         }, function(win) {
             // win represents the Window object from windows API
@@ -43,15 +43,17 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse)
     //     return true;
     // }
 
-    sendCommand(request);
+    sendCommand(request, sendResponse);
 
     return true;
 });
 
-function sendCommand(request)
+function sendCommand(request, sendResponse)
 {
     chrome.tabs.query({active: true, lastFocusedWindow: false}, function(tabs) {
         // alert("Background script is sending a message to contentscript tab-url: " + tabs[0].url + "\n" + JSON.stringify(request, null, 4) +"");
-        chrome.tabs.sendMessage(tabs[0].id, request);
+        chrome.tabs.sendMessage(tabs[0].id, request, function(response) {
+          sendResponse(response);
+        });
     });
 }
