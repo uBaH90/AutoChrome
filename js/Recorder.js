@@ -1,6 +1,3 @@
-// Array of events you want to capture
-var events = ["mousedown", "click", "mouseup", "focus", "blur", "keyup", "keydown", "keypressed"];
-
 class Recorder {
     constructor(window) {
         this.window = window;
@@ -11,9 +8,14 @@ class Recorder {
 
         $(":input").each(function (key, value) {
             // console.log("key: " + key + ", value: " + $(this).attr('id'));
-            var id = $(this).attr ('id');
-            $(this).blur(function() {
-              callback({target: "input", targetId: id, eventType: "blur", value: $(this).val()});
+            var id = $(this).attr('id');
+
+            $(this).focus(function () {
+                callback({target: "input", targetId: id, eventType: "focus", value: $(this).val()});
+            });
+
+            $(this).blur(function () {
+                callback({target: "input", targetId: id, eventType: "blur", value: $(this).val()});
             });
         });
     }

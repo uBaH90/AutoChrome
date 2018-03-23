@@ -1,11 +1,13 @@
+var recording = false;
+
 document.addEventListener('DOMContentLoaded', () => {
-    chrome.browserAction.onClicked.addListener(function(tab) {
+    chrome.browserAction.onClicked.addListener(function (tab) {
         chrome.windows.create({
             url: chrome.runtime.getURL("main.html"),
             type: "popup",
             width: 700,
             height: 1000
-        }, function(win) {
+        }, function (win) {
             // win represents the Window object from windows API
             // Do something after opening
             var x = document.getElementsByTagName("title")[0];
@@ -15,9 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-
-chrome.runtime.onMessage.addListener( function(request, sender, sendResponse)
-{
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     // alert(JSON.stringify(request, null, 4));
 
     // if (request.cmd === "GetURL")
@@ -43,17 +43,56 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse)
     //     return true;
     // }
 
-    sendCommand(request, sendResponse);
+    switch (request.cmd) {
+        case 'record':
+            recording = true;
+            sendCommand(request, sendResponse);
+            break;
+
+        case 'stop':
+            recording = false;
+            sendCommand(request, sendResponse);
+            break;
+
+        case 'play':
+            sendCommand(request, sendResponse);
+            break;
+
+        case 'notify':
+            alert("recording: " + recording);
+            if (recording) {
+                notifyPopup(request);
+            }
+            break;
+
+        default:
+            break;
+    }
 
     return true;
 });
 
-function sendCommand(request, sendResponse)
-{
-    chrome.tabs.query({active: true, lastFocusedWindow: false}, function(tabs) {
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
+    if (recording) {
+        var url = changeInfo.url;
+
+        if (url != null && url.length > 0) {
+            notifyPopup({type: 'urlChanged', url: url})
+        }
+    }
+
+    console.log('updated from background tabId: ' + tabId + '; changeInfo: ' + JSON.stringify(changeInfo, null, 4));
+});
+
+function sendCommand(request, sendResponse) {
+    chrome.tabs.query({active: true, lastFocusedWindow: false}, function (tabs) {
         // alert("Background script is sending a message to contentscript tab-url: " + tabs[0].url + "\n" + JSON.stringify(request, null, 4) +"");
-        chrome.tabs.sendMessage(tabs[0].id, request, function(response) {
-          sendResponse(response);
+        chrome.tabs.sendMessage(tabs[0].id, request, function (response) {
+            sendResponse(response);
         });
     });
+}
+
+function notifyPopup(notification) {
+    chrome.runtime.sendMessage({notification});
 }

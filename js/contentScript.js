@@ -1,5 +1,4 @@
-
-var actions = [];
+var recording = false;
 
 $( document ).ready(function() {
     console.log("contentscript: document ready");
@@ -13,13 +12,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             break;
 
         case "record":
-            console.log("record");
-            var recorder = new Recorder(window);
-            recorder.record(addAction);
+            record();
+            recording = true;
             break;
 
         case "stop":
-            sendResponse(actions);
+            sendResponse();
+            recording = false;
+            break;
+
+        case "play":
+            play(request.actions);
             break;
 
         default:
@@ -30,20 +33,40 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 function addAction(action) {
-  console.log("Adding action...: " + JSON.stringify(action, null, 4))
-  actions.push(action);
+  // console.log("Adding action...: " + JSON.stringify(action, null, 4));
+  notifyBackground({type: 'newAction', action: action});
 }
 
-function performEvent(event) {
-    console.log("performEvent:  ID: " + event.id + "\nValue: " + event.value + "\nType: " + event.eventType);
-    $elem = $("#" + event.id);
-    if (event.eventType === "input") {
-        $elem.val(event.value);
-    }
-    else {
-        $elem.trigger(event.eventType);
+function play(actions) {
+    console.log("play: actions: " + actions);
+    for(var i = 0; i < actions.length; i++) {
+        var action = actions[i];
+        console.log("Action: " + JSON.stringify(action, null, 4));
+        $elem = $("#" + action.targetId);
+        if (action.target === 'input') {
+            $elem.val(action.value);
+        }
+
+        $elem.trigger(action.eventType);
     }
 }
+
+function record() {
+    console.log("record");
+    var recorder = new Recorder(window);
+    recorder.record(addAction);
+}
+
+function notifyBackground(notification) {
+    if (!recording) {
+        return;
+    }
+    
+    notification.cmd = 'notify';
+    chrome.runtime.sendMessage({notification});
+}
+
+
 
 
 function evenListener(e) {

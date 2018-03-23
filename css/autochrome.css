@@ -5,3 +5,7 @@ textarea {
 table {
     cursor: default;
 }
+
+#url {
+    width: 100%;
+}

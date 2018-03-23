@@ -11,9 +11,30 @@ $(document).ready(function() {
     setupStopButton();
 });
 
+// listen to notifications of background script
+chrome.runtime.onMessage.addListener( function(request, sender, sendResponse)
+{
+    console.log(JSON.stringify(request, null, 4));
+
+    switch (request.notification.type) {
+        case 'urlChanged':
+            setUrl(request.notification.url);
+            break;
+
+        case 'newAction':
+            addAction(request.notification.action);
+            break;
+
+        default:
+            break;
+    }
+
+    return true;
+});
+
 function setupPlayButton() {
   $('#btn-play').click(function () {
-      sendCommand({cmd: "play", events: events}, function (response) {
+      sendCommand({cmd: "play", actions: actions}, function (response) {
 
       })
   });
@@ -23,7 +44,7 @@ function setupRecordButton() {
   $('#btn-record').click(function () {
       sendCommand({cmd: "record"}, function (response) {
 
-      })
+      });
 
       $(this).prop("disabled", true);
       $('#btn-stop').prop("disabled", false);
@@ -33,18 +54,8 @@ function setupRecordButton() {
 function setupStopButton() {
   $('#btn-stop').click(function () {
       sendCommand({cmd: "stop"}, function (response) {
-          // alert(JSON.stringify(response, null, 4))
-          var $actionsTable =$("#actions-table tbody");
-          if (response != null && response.length > 0) {
-            for (var i = 0; i < response.length; i++) {
-              var action = response[i];
-              actions.push(action);
-              $actionsTable.append("<tr><td>" + action.eventType + "</td><td>" + action.target + ":" + action.targetId + "</td><td>" + action.value + "</td></tr>");
-            };
-
-            setupActionsTable();
-          }
-      })
+          setupActionsTable();
+      });
 
       $(this).prop("disabled", true);
       $('#btn-record').prop("disabled", false);
@@ -66,4 +77,15 @@ function sendCommand(cmd, callback) {
     chrome.runtime.sendMessage(cmd, function (response) {
         callback(response);
     });
+}
+
+function setUrl(url) {
+    $('#url').val(url);
+}
+
+function addAction(action) {
+    if (action != null) {
+        $("#actions-table tbody").append("<tr><td>" + action.eventType + "</td><td>" + action.target + ":" + action.targetId + "</td><td>" + action.value + "</td></tr>");
+        actions.push(action);
+    }
 }
